@@ -1,0 +1,17 @@
+{
+  "id": "442de203-12e0-4bc9-b9e7-7edbfc4084ee",
+  "time": 1686684893964,
+  "realmId": "0dd25a89-6cf3-4d8e-9554-89d78e25a5ba",
+  "authDetails": {
+    "realmId": "0dd25a89-6cf3-4d8e-9554-89d78e25a5ba",
+    "clientId": "476fb04c-61ab-4051-99a1-1affb2cd7337",
+    "userId": "d329fd9f-463e-41fe-8d39-f1c48606ec05",
+    "ipAddress": "172.25.0.1"
+  },
+  "resourceType": "REALM_ROLE_MAPPING",
+  "operationType": "CREATE",
+  "resourcePath": "users/e9a87403-971a-485b-a98d-d1c5725249c1/role-mappings/realm",
+  "representation": "[{\"id\":\"27b74a5e-76ca-4dc4-832d-50fd007128e8\",\"name\":\"agent\",\"description\":\"\",\"composite\":false,\"clientRole\":false,\"containerId\":\"0dd25a89-6cf3-4d8e-9554-89d78e25a5ba\"}]",
+  "error": null,
+  "resourceTypeAsString": "REALM_ROLE_MAPPING"
+}

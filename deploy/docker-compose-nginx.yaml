@@ -1,0 +1,18 @@
+version: '3'
+services:
+  nginx:
+    image: openresty
+    build:
+      context: ./
+      dockerfile: Dockerfile-resty
+    ports:
+      - 8085:8080
+    volumes:
+      - ./nginx.conf:/opt/bitnami/openresty/nginx/conf/nginx.conf:ro
+    depends_on:
+      - backend-service
+
+  backend-service:
+    image: kong/httpbin
+    ports:
+      - 8000:80

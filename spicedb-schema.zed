@@ -1,0 +1,29 @@
+definition user {}
+
+  definition branch{
+      relation manager: user
+      relation agent: user
+
+      permission manage = manager
+      permission is_agent = agent
+  }
+
+  definition group_agent{
+      relation branch: branch
+      relation member: user | user with is_not_expired
+
+      //can only manage if it is member of this group and also agent in branch OR manager in the branch
+      permission can_manage = (member & branch->is_agent) + branch->manage
+  }
+
+  definition account{
+      relation owner: user
+      relation agent: group_agent#member
+
+      permission can_read = owner + agent->can_manage
+      permission can_write = owner + agent->can_manage
+  }
+
+  caveat is_not_expired(current_time timestamp, expiration timestamp) {
+      current_time < expiration
+    }

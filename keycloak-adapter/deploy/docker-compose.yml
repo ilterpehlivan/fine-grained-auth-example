@@ -1,0 +1,60 @@
+version: '3'
+services:
+  keycloak:
+    depends_on:
+      - "kafka"
+    image: keycloak-kafka
+    build:
+      context: ./
+      dockerfile: Dockerfile-keycloak-kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KAFKA_TOPIC: keycloak-events
+      KAFKA_ADMIN_TOPIC: keycloak-admin-events
+      KAFKA_CLIENT_ID: keycloak
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9094
+    command: start-dev --log-level="INFO,org.apache.kafka.clients:error,com.github.snuk87:debug"
+
+  zookeeper:
+    restart: always
+    image: confluentinc/cp-zookeeper:7.4.0
+    ports:
+      - "2181:2181"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    depends_on:
+      - "zookeeper"
+    image: confluentinc/cp-kafka:7.4.0
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092,PLAINTEXT_EXTERNAL://kafka:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_CREATE_TOPICS: "keycloak-events:1:1"
+#      ALLOW_PLAINTEXT_LISTENER: "yes"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  spicedb:
+    image: "authzed/spicedb"
+    command: "serve"
+    restart: "always"
+    ports:
+      - "8081:8080"
+      - "9090:9090"
+      - "50051:50051"
+    environment:
+      - "SPICEDB_GRPC_PRESHARED_KEY=demo-key"
+      - "SPICEDB_DATASTORE_ENGINE=memory"

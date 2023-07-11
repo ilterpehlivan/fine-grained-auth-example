@@ -1,0 +1,74 @@
+schema: |-
+  definition user {}
+
+  definition branch{
+      relation manager: user
+      relation agent: user
+
+      permission manage = manager
+      permission is_agent = agent
+  }
+
+  definition group_agent{
+      relation branch: branch
+      relation member: user | user with is_not_expired
+
+      //can only manage if it is member of this group and also agent in branch OR manager in the branch
+      permission can_manage = (member & branch->is_agent) + branch->manage
+  }
+
+  definition account{
+      relation owner: user
+      relation agent: group_agent#member
+
+      permission can_read = owner + agent->can_manage
+      permission can_write = owner + agent->can_manage
+  }
+
+  caveat is_not_expired(current_time timestamp, expiration timestamp) {
+      current_time < expiration
+    }
+relationships: |-
+  //first create branch
+  branch:1#manager@user:manager1
+  branch:1#agent@user:agent1
+  branch:1#agent@user:agent3
+  branch:2#agent@user:agent2
+
+  //define the group inside the branch
+  group_agent:g1#branch@branch:1
+  group_agent:g1#member@user:agent1
+  group_agent:g1#member@user:agent3[is_not_expired:{"expiration":"2023-06-24T00:00:00Z"}]
+  group_agent:g2#member@user:agent2
+
+  //define accounts
+  account:1#owner@user:client1
+  account:1#agent@group_agent:g1#member
+  account:2#owner@user:client1
+  account:2#agent@group_agent:g2#member
+  account:3#owner@user:client2
+  account:3#agent@group_agent:g2#member
+  // partial relationship: {"resourceType":"","resourceId":"","relation":"","subjectType":"","subjectId":"","subjectRelation":"","caveatName":"","caveatContext":""}
+assertions:
+  assertTrue:
+    - account:1#can_read@user:agent1
+    - account:1#can_read@user:manager1
+    - account:2#can_read@user:client1
+    - account:1#can_read@user:agent3 with {"current_time":"2023-06-23T00:00:00Z"}
+  assertFalse:
+    - account:2#can_read@user:manager1
+    - account:1#can_read@user:agent2
+    - account:1#can_read@user:client2
+    - account:1#can_read@user:agent3 with {"current_time":"2023-06-25T00:00:00Z"}
+    - account:2#can_read@user:agent3 with {"current_time":"2023-06-23T00:00:00Z"}
+validation:
+  account:1#can_read:
+    - "[user:agent1] is <branch:1#agent>/<group_agent:g1#member>"
+    - "[user:agent3[...]] is <branch:1#agent>/<group_agent:g1#member>"
+    - "[user:client1] is <account:1#owner>"
+    - "[user:manager1] is <branch:1#manager>"
+  account:1#can_write:
+    - "[user:agent1] is <branch:1#agent>/<group_agent:g1#member>"
+    - "[user:agent3[...]] is <branch:1#agent>/<group_agent:g1#member>"
+    - "[user:client1] is <account:1#owner>"
+    - "[user:manager1] is <branch:1#manager>"

@@ -1,0 +1,17 @@
+{
+  "id": "95c6cb73-2097-4b62-9d36-cb23bd56275e",
+  "time": 1686350133309,
+  "realmId": "cdafecc5-5657-4065-844a-6a5600e25afd",
+  "authDetails": {
+    "realmId": "cdafecc5-5657-4065-844a-6a5600e25afd",
+    "clientId": "1e5a7641-2c40-418c-9cb7-b4fb8081c88f",
+    "userId": "86298774-ab65-446d-9e33-349b537dc1b9",
+    "ipAddress": "172.24.0.1"
+  },
+  "resourceType": "USER",
+  "operationType": "CREATE",
+  "resourcePath": "users/09f80a60-fb8a-49e3-8e02-1c3e76acfa3e",
+  "representation": "{\"username\":\"test5\",\"enabled\":true,\"emailVerified\":false,\"firstName\":\"\",\"lastName\":\"\",\"email\":\"\",\"requiredActions\":[],\"groups\":[]}",
+  "error": null,
+  "resourceTypeAsString": "USER"
+}

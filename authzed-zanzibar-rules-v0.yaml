@@ -1,0 +1,67 @@
+schema: |-
+  definition user {}
+
+  definition branch{
+      relation manager: user
+
+      permission manage = manager
+  }
+
+
+  definition group_agent{
+      relation member: user | user with is_not_expired
+  }
+
+  definition account{
+      relation owner: user
+      relation agent: group_agent#member
+      relation branch: branch
+
+      permission can_read = owner + agent + branch->manage
+      permission can_write = owner + agent + branch->manage
+
+  }
+
+  caveat is_not_expired(current_time timestamp, expiration timestamp) {
+      current_time < expiration
+    }
+relationships: |-
+  group_agent:g1#member@user:agent1
+  group_agent:g1#member@user:agent3[is_not_expired:{"expiration":"2023-06-24T00:00:00Z"}]
+  group_agent:g2#member@user:agent2
+  account:1#owner@user:client1
+  account:1#agent@group_agent:g1#member
+  account:2#owner@user:client1
+  account:2#agent@group_agent:g2#member
+  account:3#owner@user:client2
+  account:3#agent@group_agent:g2#member
+  branch:1#manager@user:manager1
+  account:1#branch@branch:1
+  account:2#branch@branch:1
+  account:3#branch@branch:1
+  // partial relationship: {"resourceType":"","resourceId":"","relation":"","subjectType":"","subjectId":"","subjectRelation":"","caveatName":"","caveatContext":""}
+assertions:
+  assertTrue:
+    - account:1#can_read@user:agent1
+    - account:1#can_read@user:manager1
+    - account:2#can_read@user:manager1
+    - account:2#can_read@user:client1
+    - account:1#can_read@user:agent3 with {"current_time":"2023-06-23T00:00:00Z"}
+  assertFalse:
+    - account:1#can_read@user:agent2
+    - account:1#can_read@user:client2
+    - account:1#can_read@user:agent3 with {"current_time":"2023-06-25T00:00:00Z"}
+    - account:2#can_read@user:agent3 with {"current_time":"2023-06-23T00:00:00Z"}
+validation:
+  account:1#can_read:
+    - "[group_agent:g1#member] is <account:1#agent>"
+    - "[user:agent1] is <group_agent:g1#member>"
+    - "[user:agent3[...]] is <group_agent:g1#member>"
+    - "[user:client1] is <account:1#owner>"
+    - "[user:manager1] is <branch:1#manager>"
+  account:1#can_write:
+    - "[group_agent:g1#member] is <account:1#agent>"
+    - "[user:agent1] is <group_agent:g1#member>"
+    - "[user:agent3[...]] is <group_agent:g1#member>"
+    - "[user:client1] is <account:1#owner>"
+    - "[user:manager1] is <branch:1#manager>"

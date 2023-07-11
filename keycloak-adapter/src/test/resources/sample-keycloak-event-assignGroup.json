@@ -1,0 +1,17 @@
+{
+  "id": "1b2bb54a-e9bc-46de-ace1-ccc08adc99d3",
+  "time": 1686690554646,
+  "realmId": "0dd25a89-6cf3-4d8e-9554-89d78e25a5ba",
+  "authDetails": {
+    "realmId": "0dd25a89-6cf3-4d8e-9554-89d78e25a5ba",
+    "clientId": "476fb04c-61ab-4051-99a1-1affb2cd7337",
+    "userId": "d329fd9f-463e-41fe-8d39-f1c48606ec05",
+    "ipAddress": "172.25.0.1"
+  },
+  "resourceType": "GROUP_MEMBERSHIP",
+  "operationType": "CREATE",
+  "resourcePath": "users/d954cbad-c8c1-47ef-8793-5b9c128fb9c0/groups/59067710-5938-4d6d-80d5-2f32ca2d2cbe",
+  "representation": "{\"id\":\"59067710-5938-4d6d-80d5-2f32ca2d2cbe\",\"name\":\"group-agent-1\",\"path\":\"/group-agent-1\",\"attributes\":{\"branch\":[\"test\"]},\"realmRoles\":[],\"clientRoles\":{}}",
+  "error": null,
+  "resourceTypeAsString": "GROUP_MEMBERSHIP"
+}
