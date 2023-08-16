@@ -42,3 +42,10 @@ This is end 2 end flow when actor fires a request towards the system and how the
 zed context set first-dev-context :50051 "demo-key" --insecure
 zed schema write spicedb-schema.zed --insecure
 ```
+
+<TODO: explain how to test use cases with keycloak screenshots>
+
+# TODO
+
+- [ ] Nginx integration
+- [ ] K8s deployment with sidecar pattern
